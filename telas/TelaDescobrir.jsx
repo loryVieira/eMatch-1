@@ -11,7 +11,7 @@ import {
 
 import axios from 'axios';
 
-const { larguraTela } = Dimensions.get('window');
+const { width: larguraTela } = Dimensions.get('window');
 
 function TelaDescobrir() {
     const [usuarios, setUsuarios] = useState([]);
@@ -36,10 +36,13 @@ function TelaDescobrir() {
         }
     }
 
-    const irPara = (novoIndex) => {
-        if (novoIndex >= 0 && novoIndex < usuarios.length){
+    // Função para navegar entre os cartões
+    const irPara = (novoIndex) => () => {
+        if (novoIndex >= 0 && novoIndex < usuarios.length) {
+            // Muda o índice e rola a FlatList para o cartão correspondente
             flatListRef.current.scrollToIndex({ index: novoIndex, animated: true });
-
+            
+            // Atualiza o estado do índice atual
             setIndex(novoIndex);
         }
     }
@@ -64,6 +67,10 @@ function TelaDescobrir() {
                 horizontal
                 pagingEnabled
                 showsHorizontalScrollIndicator={false}
+                onMomentumScrollEnd={(event) => {
+                    const novoIndex = Math.round(event.nativeEvent.contentOffset.x / larguraTela);
+                    setIndex(novoIndex);
+                }}
             />
 
             <View style={styles.botoes}>
